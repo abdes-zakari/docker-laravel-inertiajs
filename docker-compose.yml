@@ -1,0 +1,92 @@
+services:
+  app:
+    container_name: laravel_app_php
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./src:/var/www/html:delegated
+      - ./docker/php.ini:/usr/local/etc/php/conf.d/zz-custom.ini:ro
+      - /var/www/html/node_modules
+      - /var/www/html/vendor
+    environment:
+      APP_ENV: local
+      APP_DEBUG: "true"
+      APP_URL: http://localhost
+      DB_CONNECTION: mysql
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: laravel
+      DB_USERNAME: laravel
+      DB_PASSWORD: secret
+    depends_on:
+      - db
+    networks:
+      - appnet
+
+  web:
+    container_name: laravel_app_nginx
+    image: nginx:1.27-alpine
+    ports:
+      - "8000:80"
+    volumes:
+      - ./src:/var/www/html:delegated
+      - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    environment:
+      WEB_DOCUMENT_ROOT: /var/www/html/public
+    depends_on:
+      - app
+    networks:
+      - appnet
+
+  # node:
+  #   container_name: laravel_app_node
+  #   image: node:20-alpine
+  #   working_dir: /var/www/html
+  #   command: sh -c "npm install && npm run dev"
+  #   volumes:
+  #     - ./src:/var/www/html:delegated
+  #   ports:
+  #     - "5173:5173"   # Vite dev server (HMR)
+  #   environment:
+  #     - CHOKIDAR_USEPOLLING=true    # gut für Docker/FS Events
+  #   networks:
+  #     - appnet
+  node:
+    image: node:20-alpine
+    container_name: laravel_app_node
+    working_dir: /var/www/html
+    volumes:
+      - ./src:/var/www/html
+      - /var/www/html/node_modules
+    command: sh -c "npm install && npm run dev"
+    ports:
+      - "5173:5173"  # Vite hot reload port
+    networks:
+      - appnet
+    depends_on:
+      - app
+
+
+  db:
+    container_name: laravel_app_mysql
+    image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_DATABASE: laravel
+      MYSQL_USER: laravel
+      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - dbdata:/var/lib/mysql
+    networks:
+      - appnet
+
+volumes:
+  dbdata:
+
+networks:
+  appnet:
+    driver: bridge
