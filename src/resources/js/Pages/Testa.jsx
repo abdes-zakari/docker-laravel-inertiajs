@@ -7,7 +7,7 @@ export default function Testa({ user }) {
         <div>
             <Head title="Welcome" />
             <h1>Welcome</h1>
-            <p className="text-red-300">Hello {user}, welcome to Inertia.</p>
+            <p className="text-red-300">Hello {user}, welcome to Inertia. </p>
         </div>
         // </Layout>
     )
