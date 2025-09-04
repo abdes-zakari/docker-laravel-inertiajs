@@ -42,6 +42,20 @@ class ProductSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
+            [
+                'name' => 'Ergonomischer Bürostuhl',
+                'qty' => 15,
+                'price' => 249.00,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'HD Webcam mit Mikrofon',
+                'qty' => 40,
+                'price' => 59.95,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
         ]);
     }
 }

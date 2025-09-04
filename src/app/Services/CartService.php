@@ -3,44 +3,45 @@ namespace App\Services;
 
 use App\Models\Cart;
 use App\Models\User;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
+use App\Repositories\CartRepository;
 
 class CartService
-{
-    public function currentCart(): Cart {
+{   
+    public function __construct(private CartRepository $cartRepository){}
+
+    public function currentCart(): Cart
+    {
+
         $sessionId = Session::getId();
 
-        // if (Auth::check()) {
-            $cart = Cart::firstOrCreate(
-                ['user_id' => User::where('name','Test User')->first()->id],
-                ['session_id' => $sessionId]
-            );
+        $user = User::where('name', 'Test User')->first();
 
-            $sessionCart = Cart::where('session_id', $sessionId)
-                // ->where('status', 'active')
-                ->whereNull('user_id')
-                ->first();
+        $cart = Cart::firstOrCreate([
+            'user_id' => $user->id,
+            'session_id' => $sessionId
+        ]);
 
-            if ($sessionCart && $sessionCart->id !== $cart->id) {
-                foreach ($sessionCart->items as $item) {
-                    $cart->items()->updateOrCreate(
-                        ['product_id' => $item->product_id],
-                        [
-                            'qty' => \DB::raw('qty + '.$item->qty),
-                            // 'unit_price_cents' => $item->unit_price_cents,
-                        ]
-                    );
-                }
-                // $sessionCart->update(['status' => 'abandoned']);
-                // $cart->refreshTotals();
-            }
-            return $cart;
-    //     }
+        // $sessionCart = Cart::where('session_id', $sessionId)
+        //     ->whereNull('user_id')
+        //     ->first();
 
-    //     return Cart::firstOrCreate(
-    //         ['session_id' => $sessionId /*, 'status' => 'active'*/],
-    //         ['user_id' => null]
-    //     );
+        // if ($sessionCart && $sessionCart->id !== $cart->id) {
+        //     foreach ($sessionCart->items as $item) {
+        //         $cart->items()->updateOrCreate(
+        //             ['product_id' => $item->product_id],
+        //             [
+        //                 'qty' => \DB::raw('qty + '.$item->qty),
+        //             ]
+        //         );
+        //     }
+        // }
+        return $cart;
     }
+
+    // public function forSharedProps()
+    // {
+    //     $sessionId = Session::getId();
+    //     return $this->cartRepository->getProducts($sessionId);
+    // }
 }

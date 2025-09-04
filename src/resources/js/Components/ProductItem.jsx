@@ -1,5 +1,5 @@
-import { Head, Link, useForm, usePage } from "@inertiajs/react";
-import { useEffect, useRef, useState } from "react";
+import { useForm } from "@inertiajs/react";
+import { useEffect, useState } from "react";
 import { formatPrice } from "@/Utils/helpers";
 import Toast from "@/Components/Toast";
 
@@ -18,9 +18,7 @@ export default function ProductItem({ product }) {
         post("/cart/add", {
             onSuccess: () => {
                 setToast({ open: true, message: `„${product.name}“ wurde in den Warenkorb gelegt.` });
-                // alert("success")
-                // Optional: Dropdown automatisch öffnen
-                // setOpenCart(true);
+
                 reset("quantity");
             },
             onError: (errors) => {
@@ -32,7 +30,6 @@ export default function ProductItem({ product }) {
         console.log(data)
     };
 
-    // auto-hide toast
     useEffect(() => {
         if (!toast.open) return;
         const t = setTimeout(() => setToast({ open: false, message: "" }), 2200);
@@ -46,7 +43,6 @@ export default function ProductItem({ product }) {
                 key={product.id}
                 className="group overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition hover:shadow-md"
             >
-                {/* Image */}
                 <div className="relative">
                         <div className="aspect-[4/3] w-full bg-gradient-to-br from-gray-100 to-gray-200">
                             <div className="flex h-full items-center justify-center">
@@ -64,14 +60,8 @@ export default function ProductItem({ product }) {
                             </div>
                         </div>
                     
-                    {/* {product.badge && (
-                        <span className="absolute left-3 top-3 rounded-full bg-indigo-600/90 px-2.5 py-1 text-xs font-medium text-white shadow">
-                            {product.badge}
-                        </span>
-                    )} */}
                 </div>
 
-                {/* Body */}
                 <div className="flex flex-col gap-3 p-4">
                     <div>
                         <h3 className="line-clamp-2 text-base font-semibold text-gray-900 group-hover:underline">{product.name}</h3>
@@ -83,7 +73,6 @@ export default function ProductItem({ product }) {
                         {product.compare_at && <p className="text-sm text-gray-400 line-through">{formatPrice(product.compare_at)}</p>}
                     </div>
 
-                    {/* Add to cart */}
                     <form className="mt-1 flex items-stretch gap-2" onSubmit={(e) => addToCart(e, product)}>
                         <label className="sr-only" htmlFor={`qty-${product.id}`}>
                             Menge
@@ -110,15 +99,6 @@ export default function ProductItem({ product }) {
                             {processing && data.product_id === product.id ? "Wird hinzugefügt…" : "In den Warenkorb"}
                         </button>
                     </form>
-
-                    {/* Meta */}
-                    {/* <div className="mt-2 flex items-center justify-between text-xs text-gray-500">
-                        <span className="inline-flex items-center gap-1">
-                            <span className={`size-2 rounded-full ${product.in_stock ? "bg-emerald-500" : "bg-rose-500"}`} />
-                            {product.in_stock ? "Auf Lager" : "Nicht verfügbar"}
-                        </span>
-                        {product.sku && <span>SKU: {product.sku}</span>}
-                    </div> */}
                 </div>
             </article>
         </>

@@ -3,43 +3,39 @@
 namespace App\Repositories;
 
 use App\Models\Cart;
+use Illuminate\Database\Eloquent\Collection;
 
 class CartRepository
 {   
     public function __construct(private Cart $cart){}
 
-    public function getAll()
+    public function getAll(): Collection
     {
         return $this->cart->all();
     }
 
-    public function addToCart($cart, $product_id, $quantity)
+    public function addOrUpdateCart(Cart $cart, int $product_id, int $quantity): void
     {
-        // $cart = $this->cartService->currentCart();
-
         $cart->items()->updateOrCreate(
             ['product_id' => $product_id ],
             [
-            'qty' => \DB::raw('GREATEST(1, qty + '.(int)$quantity.')'),
-            // 'unit_price_cents' => Product::find($validated['product_id'])->price_cents,
+                // 'qty' => \DB::raw('GREATEST(1, qty + '.(int)$quantity.')'),
+                'qty' => (int)$quantity,
             ]
         );
     }
 
-    public function getProducts($sessionId)
+    public function getProducts(string $sessionId): ?Cart
     {      
-        return $cart = Cart::with('items.product') // falls du auch Produktdaten brauchst
-    ->where('session_id', $sessionId)
-    ->first();
+        return Cart::with('items.product') 
+                ->where('session_id', $sessionId)
+                ->first();
+    }
 
-        // $sessionCart = Cart::where('session_id', $sessionId)->first()->items;
 
-        // $items = $sessionCart->items;
-        // dd($items->toArray());
-    // foreach ($sessionCart->items as $item) {
-    //     echo $item->product->name;
-    //     echo"<br>";
-    // }
-        
+
+    public function removeProduct(Cart $cart, int $itemId): void
+    {
+        $cart->items()->where('id', $itemId)->delete();
     }
 }

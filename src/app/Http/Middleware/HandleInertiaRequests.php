@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
 use Inertia\Middleware;
+use App\Services\CartService;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -37,7 +38,7 @@ class HandleInertiaRequests extends Middleware
     {
         return [
             ...parent::share($request),
-            //
+            // 'cart' => fn () => app(CartService::class)->forSharedProps(),
         ];
     }
 }

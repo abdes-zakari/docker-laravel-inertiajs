@@ -1,12 +1,9 @@
-
-
 export default function Toast({ toast, onClose }) {
     
     return (
         <>
-            {/* Fixed Toast (oben rechts) */}
             <div
-                className={`pointer-events-none fixed right-4 top-4 z-50 transition-all ${toast.open ? "translate-y-0 opacity-100" : "-translate-y-3 opacity-0"
+                className={`pointer-events-none fixed right-10 top-26 z-50 transition-all ${toast.open ? "translate-y-0 opacity-100" : "-translate-y-3 opacity-0"
                     }`}
                 aria-live="polite"
                 aria-atomic="true"
